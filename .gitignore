@@ -1,0 +1,47 @@
+# Byte-compiled / optimized / Python execution files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Environments & Dependencies
+venv/
+.venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+node_modules/
+
+# Local Audio & Temporary Files
+*.wav
+*.mp3
+*.m4a
+*.flac
+*.ogg
+temp_*
+*.log
+
+# whisper.cpp local model binary downloads (preventing huge git commits)
+*.bin
+*.pt
+models/
+
+# OS-generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE & Editor Configs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Environment Variables & Secrets
+.env
+.env.local
