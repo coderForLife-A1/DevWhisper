@@ -1,38 +1,76 @@
-# 🔒 DevWhisper
+# 🔒 DevWhisper Desktop
 
-> **100% Offline, Privacy-First AI Meeting & Developer Task Extractor**
-> Built for freelancers, agencies, and engineering consultants who deal with strict client NDAs and cannot upload sensitive audio to cloud servers.
+> **100% Offline, Privacy-First AI Meeting Notes & Task Extractor for Developers**  
+> Native Windows desktop app capturing Google Meet and Zoom audio via WASAPI loopback with zero cloud dependencies.
 
 ---
 
 ## 💡 Why DevWhisper?
 
-Standard AI meeting assistants (like Otter, Fathom, or Fireflies) upload client audio recordings to foreign cloud servers. This violates client NDAs, risks IP leaks, and incurs monthly per-token SaaS fees.
+Standard AI meeting assistants (Otter, Fathom, Fireflies) upload audio to cloud servers. This violates client NDAs, risks proprietary IP leaks, and adds recurring token fees.
 
-**DevWhisper solves this by keeping 100% of execution on your local machine:**
-- **Zero Cloud Leakage:** Audio files stay on local disk and RAM—zero external network calls.
-- **Developer-Aware Context:** Uses open-weight coding models (`Qwen2.5-Coder`) to extract technical tasks, API specs, and GitHub-ready issue definitions instead of generic meeting chatter.
-- **$0 Running Cost:** Runs indefinitely on local GPUs or Apple Silicon via quantized open-source inference.
-
----
-
-## 🛠️ Architecture & Tech Stack
-
-- **Speech-to-Text:** `whisper.cpp` (via `pywhispercpp`) for low-latency local transcription.
-- **Local Inference Engine:** `Ollama` serving open-weight LLMs (`qwen2.5-coder:7b` / `llama-3.2-3b`).
-- **Backend Service:** FastAPI running locally on `localhost:8000`.
-- **Frontend Dashboard:** Lightweight HTML5 / TailwindCSS interface.
+**DevWhisper operates 100% locally on your machine:**
+- **Zero Cloud Leakage:** Audio and transcripts never leave `localhost` or RAM.
+- **Direct Google Meet & Zoom Integration:** Captures both sides of the call (system audio loopback + microphone) using Windows WASAPI.
+- **Developer-Focused Context:** Open-weight coding models (`qwen2.5-coder:7b`) extract structured technical tasks, priorities, and client emails.
+- **Searchable Meeting Vault:** Local SQLite database with FTS5 full-text search across all meeting transcripts.
+- **Global Hotkey & Tray App:** Lives in your Windows system tray; trigger recording anywhere via `Ctrl+Shift+R`.
 
 ---
 
-## 🚀 Getting Started
+## 🛠️ Tech Stack & Architecture
 
-### Prerequisites
+- **UI Framework:** PySide6 (Qt 6) with customized dark modern theme and system tray integration.
+- **Audio Capture:** `PyAudioWPatch` (Windows WASAPI loopback + native microphone dual streaming).
+- **Speech-to-Text:** `whisper.cpp` (`pywhispercpp` with local quantized models: `base.en`).
+- **Local LLM Extraction:** `Ollama` serving `qwen2.5-coder:7b` with strict Pydantic v2 structured schemas.
+- **Storage:** Local SQLite database with FTS5 search (`~/.devwhisper/meetings.db`).
 
-1. **Python 3.10+** installed.
-2. **Ollama** installed and running locally. Download from [ollama.com](https://ollama.com).
+---
 
-### 1. Pull the Local Model
+## 🚀 Quick Start
+
+### 1. Prerequisites
+- **Python 3.10+** (64-bit Windows)
+- **Ollama** running locally ([ollama.com](https://ollama.com))
 
 ```bash
+# Pull the developer model in Ollama
 ollama pull qwen2.5-coder:7b
+```
+
+### 2. Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### 3. Launch DevWhisper Desktop
+
+```bash
+python run.py
+```
+
+---
+
+## ⌨️ Global Shortcuts & Features
+
+- **Toggle Recording:** `Ctrl + Shift + R` (Global system-wide hotkey)
+- **Auto-Detection:** Automatically spots active Google Meet browser tabs and Zoom desktop meetings.
+- **Review & Export:** View instant summaries, filterable action item tables, client follow-up drafts, and one-click copy to Markdown.
+pip install -r requirements.txt
+```
+
+### 3. Launch DevWhisper Desktop
+
+```bash
+python run.py
+```
+
+---
+
+## ⌨️ Global Shortcuts & Features
+
+- **Toggle Recording:** `Ctrl + Shift + R` (Global system-wide hotkey)
+- **Auto-Detection:** Automatically spots active Google Meet browser tabs and Zoom desktop meetings.
+- **Review & Export:** View instant summaries, filterable action item tables, client follow-up drafts, and one-click copy to Markdown.

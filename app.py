@@ -1,34 +1,41 @@
-# app.py
-from fastapi import FastAPI, UploadFile, File, HTTPException
-import shutil
+
+
+
+
+from fastapi import FastAPI, File, UploadFile
+from pydantic import ValidationError
+from fastapi.responses import JSONResponse
 import os
 from transcriber import AudioTranscriber
 from extractor import process_transcript
 
-app = FastAPI(title="DevWhisper Local API")
-transcriber = AudioTranscriber(model_name="base.en")
 
+
+
+app = FastAPI()
 @app.post("/api/process")
 async def process_audio(file: UploadFile = File(...)):
-    temp_path = f"temp_{file.filename}"
+
     try:
-        with open(temp_path, "wb") as buffer:
-            shutil.copyfileobj(file.file, buffer)
-            
-        transcript = transcriber.transcribe(temp_path)
-        extracted_data = process_transcript(transcript)
+
+
+
+
+
+        with open(f"temp_{file.filename}", "wb") as buffer:
+            buffer.write(await file.read())
+
+        audio = AudioTranscriber(model_name="base.en").transcribe(f"temp_{file.filename}")
+        extracted_data = process_transcript(audio)
         
         return {
             "status": "success",
-            "transcript": transcript,
+
+            "transcript": audio,
             "data": extracted_data.model_dump()
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     finally:
-        if os.path.exists(temp_path):
-            os.remove(temp_path)
-
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="127.0.0.1", port=8000)
+        if os.path.exists(f"temp_{file.filename}"):
+            os.remove(f"temp_{file.filename}")
