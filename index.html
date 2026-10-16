@@ -1,62 +1,102 @@
-<!-- Save as static/index.html and serve via FastAPI or open in browser -->
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
-    <title>DevWhisper - Local Client Vault</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevWhisper</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 
-<body class="bg-slate-900 text-slate-100 p-8">
-    <div class="max-w-4xl mx-auto space-y-6">
-        <header class="border-b border-slate-800 pb-4">
-            <h1 class="text-2xl font-bold text-teal-400">🔒 DevWhisper</h1>
-            <p class="text-slate-400 text-sm">Offline Meeting & Developer Action-Item Extractor</p>
-        </header>
 
-        <div class="bg-slate-800 p-6 rounded-xl border border-slate-700">
-            <label class="block mb-2 text-sm font-medium">Select Meeting Recording (.wav / .mp3)</label>
-            <input type="file" id="audioInput" accept="audio/*"
-                class="block w-full text-sm text-slate-300 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-teal-600 file:text-white hover:file:bg-teal-500 cursor-pointer" />
-            <button onclick="uploadAudio()"
-                class="mt-4 px-6 py-2 bg-teal-500 hover:bg-teal-400 text-slate-900 font-bold rounded-lg transition">Process
-                Locally</button>
-        </div>
 
-        <div id="output" class="hidden space-y-6">
-            <div class="bg-slate-800 p-6 rounded-xl border border-slate-700">
-                <h2 class="text-lg font-semibold text-teal-300 mb-2">Drafted Client Email</h2>
-                <textarea id="clientEmail" class="w-full h-32 bg-slate-900 p-3 rounded text-slate-200 text-sm font-mono"
-                    readonly></textarea>
-            </div>
 
-            <div class="bg-slate-800 p-6 rounded-xl border border-slate-700">
-                <h2 class="text-lg font-semibold text-teal-300 mb-2">Extracted Tasks (JSON / Markdown)</h2>
-                <pre id="actionItems" class="bg-slate-900 p-3 rounded text-slate-200 text-xs overflow-x-auto"></pre>
-            </div>
-        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+<body class="bg-gray-900 text-white p-4">
+    <h1 class="text-3xl font-bold mb-6">DevWhisper - Local Speech to Text & LLM Processing</h1>
+    <input type="file" id="audioFile" accept=".wav, .mp3, .m4a" class="mb-4" />
+    <button id="processButton" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Process
+        Locally</button>
+    <div id="output" class="mt-8">
+        <h2>Client Follow-Up Email</h2>
+        <textarea id="clientEmail" rows="10" cols="50" class="bg-gray-800 text-white"></textarea>
+        <br />
+        <h2>Action Items</h2>
+        <pre id="actionItems" class="bg-gray-800 text-white p-4 overflow-y-auto"></pre>
     </div>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     <script>
-        async function uploadAudio() {
-            const fileInput = document.getElementById('audioInput');
-            if (!fileInput.files[0]) return alert('Select an audio file first.');
 
-            const formData = new FormData();
-            formData.append('file', fileInput.files[0]);
 
-            document.getElementById('output').classList.add('hidden');
 
-            const res = await fetch('http://127.0.0.1:8000/api/process', { method: 'POST', body: formData });
-            const json = await res.json();
-
-            if (json.status === 'success') {
-                document.getElementById('clientEmail').value = json.data.client_email;
-                document.getElementById('actionItems').innerText = JSON.stringify(json.data.action_items, null, 2);
-                document.getElementById('output').classList.remove('hidden');
+        document.getElementById('processButton').addEventListener('click', async () => {
+            const fileInput = document.getElementById('audioFile');
+            if (!fileInput.files || fileInput.files.length === 0) {
+                alert('Please select an audio file.');
+                return;
             }
-        }
+
+
+
+            const file = fileInput.files[0];
+            const formData = new FormData();
+            formData.append('file', file);
+
+
+
+
+
+
+
+
+
+
+            try {
+                const response = await fetch('http://127.0.0.1:8000/api/process', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    alert('Error processing audio.');
+                    return;
+                }
+                const data = await response.json();
+                document.getElementById('clientEmail').value = data.extraction_result.client_email;
+                document.getElementById('actionItems').textContent = JSON.stringify(data.extraction_result.action_items, null, 2);
+            } catch (error) {
+                console.error(error);
+                alert('An error occurred while processing the audio.');
+            }
+
+        });
     </script>
 </body>
 
