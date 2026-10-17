@@ -13,19 +13,45 @@ env.bak/
 venv.bak/
 node_modules/
 
-# Local Audio & Temporary Files
+# Local Audio & Temporary Files (Recordings & meeting clips)
 *.wav
 *.mp3
 *.m4a
 *.flac
 *.ogg
+*.aac
+*.wma
 temp_*
 *.log
+
+# Application Data & Local SQLite Databases
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+.devwhisper/
+recordings/
 
 # whisper.cpp local model binary downloads (preventing huge git commits)
 *.bin
 *.pt
+*.ggml
+*.gguf
 models/
+
+# Testing & Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+
+# Packaging & Distribution
+build/
+dist/
+*.egg-info/
+.eggs/
 
 # OS-generated files
 .DS_Store
@@ -35,13 +61,18 @@ models/
 .Trashes
 ehthumbs.db
 Thumbs.db
+desktop.ini
 
 # IDE & Editor Configs
 .vscode/
 .idea/
 *.swp
 *.swo
+*~
+*.sublime-workspace
+*.sublime-project
 
 # Environment Variables & Secrets
 .env
-.env.local
+.env.*
+!.env.example
